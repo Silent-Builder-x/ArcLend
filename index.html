@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcLend | 隐私借贷协议演示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+
+        .mono { font-family: 'JetBrains+Mono', monospace; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .health-gauge {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+
+        .mxe-pulse {
+            animation: pulse-ring 2s infinite;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+
+        input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-12 px-4">
+
+    <!-- Header -->
+    <header class="w-full max-w-5xl flex justify-between items-center mb-10">
+        <div class="flex items-center gap-4">
+            <div class="bg-blue-600 p-2.5 rounded-2xl shadow-xl shadow-blue-500/20">
+                <i class="fas fa-university text-white text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter text-white">ArcLend <span class="text-blue-500 font-normal mono text-sm ml-1">v1.0</span></h1>
+                <p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold">Privacy-Preserving Lending Protocol</p>
+            </div>
+        </div>
+        <div class="flex flex-col items-end text-right">
+            <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest font-black">Cluster Node Status</span>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-xs font-bold text-slate-300">Arcium Devnet Active</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        
+        <!-- Left: Position Inputs -->
+        <div class="lg:col-span-4 space-y-6">
+            <div class="glass-panel rounded-3xl p-8 space-y-6 shadow-2xl border-t-4 border-t-blue-500">
+                <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fas fa-vault text-blue-500"></i> Manage Shielded Position
+                </h2>
+                
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-[10px] text-slate-500 mb-2 uppercase font-black tracking-tighter">Collateral Value (SOL)</label>
+                        <div class="relative">
+                            <input type="number" id="collateralInput" value="100" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-4 text-lg focus:border-blue-500 outline-none transition mono text-white">
+                            <i class="fas fa-lock absolute right-4 top-1/2 -translate-y-1/2 text-slate-700"></i>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] text-slate-500 mb-2 uppercase font-black tracking-tighter">Borrowed Amount (USDC)</label>
+                        <div class="relative">
+                            <input type="number" id="borrowedInput" value="5000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-4 text-lg focus:border-blue-500 outline-none transition mono text-white">
+                            <i class="fas fa-lock absolute right-4 top-1/2 -translate-y-1/2 text-slate-700"></i>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] text-slate-500 mb-2 uppercase font-black tracking-tighter">LTV Threshold (%)</label>
+                        <select id="ltvInput" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-4 text-sm focus:border-blue-500 outline-none transition font-bold text-white appearance-none">
+                            <option value="80">80% (Moderate Risk)</option>
+                            <option value="90">90% (High Risk)</option>
+                            <option value="70">70% (Conservative)</option>
+                        </select>
+                    </div>
+
+                    <button id="submitBtn" class="w-full bg-white text-slate-950 font-black py-4 rounded-xl hover:bg-blue-50 transition active:scale-[0.95] flex items-center justify-center gap-2 mt-4 shadow-xl">
+                        <i class="fas fa-shield-halved" id="btnIcon"></i> <span id="btnText">CHECK LIQUIDATION</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-blue-900/10 border border-blue-500/20 p-5 rounded-2xl">
+                <div class="flex items-center gap-2 mb-2 text-blue-400">
+                    <i class="fas fa-info-circle text-xs"></i>
+                    <span class="text-[10px] font-black uppercase tracking-widest">FHE Advantage</span>
+                </div>
+                <p class="text-[11px] text-slate-500 leading-relaxed italic">
+                    "在加密状态下，健康因子仅对 MXE 节点可见。外界无法通过扫描账本来预测您的爆仓点，从而杜绝清算狙击。"
+                </p>
+            </div>
+        </div>
+
+        <!-- Right: Health Factor Visualization -->
+        <div class="lg:col-span-8 space-y-6 flex flex-col">
+            <div id="mainDisplay" class="glass-panel rounded-3xl p-8 flex-1 flex flex-col relative overflow-hidden min-h-[500px]">
+                
+                <!-- Background Visualization -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+                    <i class="fas fa-microchip text-[300px] text-blue-500"></i>
+                </div>
+
+                <!-- Content Area: Idle -->
+                <div id="idleState" class="flex-1 flex flex-col items-center justify-center text-center space-y-6 z-10">
+                    <div class="w-32 h-32 rounded-full border-4 border-slate-800 flex items-center justify-center relative">
+                        <div class="w-24 h-24 rounded-full border-2 border-slate-700/50 flex items-center justify-center">
+                            <i class="fas fa-heart-pulse text-slate-800 text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-slate-400">等待输入加密头寸</h3>
+                        <p class="text-xs text-slate-600 max-w-xs">提交您的加密抵押物和借贷数据，Arcium 将在密文空间进行风险评估。</p>
+                    </div>
+                </div>
+
+                <!-- Content Area: Computing -->
+                <div id="computingState" class="hidden flex-1 flex flex-col items-center justify-center space-y-10 z-10">
+                    <div class="flex items-center gap-8 justify-center">
+                        <div class="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center mxe-pulse shadow-2xl shadow-blue-500/40 text-white text-3xl">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em]">Processing</span>
+                            <div class="h-[2px] w-32 bg-gradient-to-r from-blue-600 via-white to-slate-800"></div>
+                            <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest mono">Division & Comparison</span>
+                        </div>
+                        <div class="w-20 h-20 bg-slate-900 rounded-3xl border border-blue-500/30 flex items-center justify-center text-blue-400 text-3xl">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                    </div>
+                    <div class="text-center space-y-4">
+                        <h3 class="font-black text-blue-400 uppercase tracking-[0.4em] text-sm">正在计算同态健康因子...</h3>
+                        <div class="bg-slate-950/80 px-8 py-3 rounded-full border border-slate-800 shadow-inner">
+                            <p class="text-[10px] font-mono text-blue-300" id="statusLog">Lifting input to ArcisType...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Area: Result -->
+                <div id="resultState" class="hidden flex-1 flex flex-col z-10 animate-in fade-in zoom-in duration-500">
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="flex items-center gap-3">
+                            <div id="resultIcon" class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg text-white">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h3 id="resultTitle" class="text-sm font-black uppercase tracking-widest">--</h3>
+                                <p class="text-[10px] text-slate-500 mono">Computation ID: 5Sbv9h6o...4um</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-500 uppercase font-black">Settlement Proof</p>
+                            <p class="text-[10px] text-blue-400 mono">MXE_VERIFIED: TRUE</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Health Factor Card -->
+                        <div class="bg-slate-950/50 p-8 rounded-[2rem] border border-slate-800 shadow-2xl flex flex-col items-center justify-center text-center">
+                            <p class="text-[10px] text-slate-500 mb-4 uppercase tracking-[0.2em] font-black">Health Factor (FHE)</p>
+                            <div class="relative w-32 h-32 flex items-center justify-center mb-4">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-900" />
+                                    <circle id="gaugeCircle" cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="364.4" stroke-dashoffset="364.4" class="health-gauge" />
+                                </svg>
+                                <span class="absolute text-3xl font-black text-white mono" id="resHF">--</span>
+                            </div>
+                            <p id="hfStatus" class="text-[10px] font-bold uppercase tracking-widest">--</p>
+                        </div>
+
+                        <!-- Data Summary -->
+                        <div class="space-y-4">
+                            <div class="bg-slate-950/30 p-5 rounded-2xl border border-slate-800 flex justify-between items-center">
+                                <span class="text-[10px] text-slate-500 uppercase font-black">Is Liquidatable?</span>
+                                <span id="resLiquid" class="px-3 py-1 rounded-full text-[10px] font-black uppercase">--</span>
+                            </div>
+                            <div class="bg-slate-950/30 p-5 rounded-2xl border border-slate-800 flex justify-between items-center">
+                                <span class="text-[10px] text-slate-500 uppercase font-black">Risk Level</span>
+                                <span id="resRisk" class="text-xs font-bold text-white uppercase">--</span>
+                            </div>
+                            <div class="bg-blue-600/5 p-5 rounded-2xl border border-blue-500/10">
+                                <p class="text-[10px] text-blue-400/80 leading-relaxed">
+                                    <i class="fas fa-quote-left mr-1"></i>
+                                    该结果由 MXE 节点通过计算 <code>(Collateral * LTV) / Debt</code> 得出。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="resetDemo()" class="mt-auto mx-auto text-[10px] text-slate-600 hover:text-white transition uppercase tracking-[0.4em] font-black border-b border-transparent hover:border-white pb-1">
+                        返回监控面板
+                    </button>
+                </div>
+
+                <!-- Bottom Logs Area -->
+                <div class="mt-8 pt-8 border-t border-slate-800/50">
+                    <div class="flex justify-between items-center mb-4 px-1">
+                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Network Telemetry (FHE-Lend)</span>
+                        <span class="text-[9px] mono text-slate-600">Arcium Program: 8sFjoV...8yKoT</span>
+                    </div>
+                    <div id="liveLogs" class="space-y-2 h-24 overflow-y-auto custom-scrollbar mono text-[10px] px-1">
+                        <!-- Logs inject here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-12 text-slate-700 text-[10px] uppercase tracking-[0.5em] font-black">
+        ArcLend Protocol Infrastructure &copy; 2026
+    </footer>
+
+    <script>
+        // DOM Selectors
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+        
+        const collateralInput = document.getElementById('collateralInput');
+        const borrowedInput = document.getElementById('borrowedInput');
+        const ltvInput = document.getElementById('ltvInput');
+        
+        const mainDisplay = document.getElementById('mainDisplay');
+        const idleState = document.getElementById('idleState');
+        const computingState = document.getElementById('computingState');
+        const resultState = document.getElementById('resultState');
+        
+        const statusLog = document.getElementById('statusLog');
+        const liveLogs = document.getElementById('liveLogs');
+        const gaugeCircle = document.getElementById('gaugeCircle');
+        const resHF = document.getElementById('resHF');
+        const resLiquid = document.getElementById('resLiquid');
+        const resRisk = document.getElementById('resRisk');
+        const hfStatus = document.getElementById('hfStatus');
+        
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+
+        const logs = [
+            "Generating session x25519 ephemeral key...",
+            "Encrypting raw financial data (u64)...",
+            "Broadcasting Position packet to Cluster 456...",
+            "MXE executing check_liquidation circuit...",
+            "Performing homomorphic division: (C*L)/D...",
+            "Generating threshold boolean (is_liquidatable)...",
+            "Finalizing Arcium callback for Program 8sFjoV..."
+        ];
+
+        function addLiveLog(text, color = 'text-slate-500') {
+            const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const logEntry = document.createElement('div');
+            logEntry.className = `${color} border-l-2 border-transparent pl-2 hover:border-slate-700 transition-all`;
+            logEntry.innerHTML = `<span class="text-slate-700 mr-2">[${time}]</span> ${text}`;
+            liveLogs.prepend(logEntry);
+        }
+
+        submitBtn.addEventListener('click', () => {
+            const collateral = parseFloat(collateralInput.value);
+            const borrowed = parseFloat(borrowedInput.value);
+            const ltv = parseFloat(ltvInput.value) / 100;
+
+            if (isNaN(collateral) || isNaN(borrowed) || borrowed === 0) {
+                return;
+            }
+
+            // UI Transitions
+            submitBtn.disabled = true;
+            btnText.innerText = "COMPUTING HF...";
+            btnIcon.className = "fas fa-spinner fa-spin";
+            
+            idleState.classList.add('hidden');
+            resultState.classList.add('hidden');
+            computingState.classList.remove('hidden');
+
+            addLiveLog(`Initiating liquidation check for Position { Collateral: ${collateral}, Borrowed: ${borrowed} }`, 'text-blue-400');
+
+            let logIndex = 0;
+            const logInterval = setInterval(() => {
+                statusLog.innerText = logs[logIndex];
+                addLiveLog(`[MXE] ${logs[logIndex]}`);
+                logIndex++;
+                if(logIndex >= logs.length) clearInterval(logInterval);
+            }, 600);
+
+            // Simulation logic
+            setTimeout(() => {
+                computingState.classList.add('hidden');
+                resultState.classList.remove('hidden');
+                
+                // Real-time calculation simulation
+                const hf = (collateral * ltv * 100) / borrowed; // Here we simulate the 100x scale
+                const hfDisplay = (hf / 1).toFixed(2);
+                const isLiquidatable = hf < 100;
+
+                // Update Gauge
+                const circumference = 364.4;
+                // Gauge is max at 2.0 (200 in our scale)
+                const percent = Math.min(hf / 200, 1);
+                const offset = circumference - (percent * circumference);
+                gaugeCircle.style.strokeDashoffset = offset;
+                
+                // Color logic
+                let colorClass = "text-green-500";
+                if (hf < 120) colorClass = "text-orange-500";
+                if (hf < 100) colorClass = "text-red-500";
+                gaugeCircle.setAttribute('class', `health-gauge ${colorClass}`);
+
+                resHF.innerText = hfDisplay;
+                resHF.className = `absolute text-3xl font-black mono ${colorClass}`;
+                
+                if (isLiquidatable) {
+                    resultIcon.className = "w-12 h-12 rounded-2xl flex items-center justify-center bg-red-600 shadow-red-500/20";
+                    resultTitle.innerText = "清算警告: 头寸处于风险中";
+                    resultTitle.className = "text-sm font-black uppercase tracking-widest text-red-500";
+                    resLiquid.innerText = "YES (TRUE)";
+                    resLiquid.className = "px-3 py-1 rounded-full text-[10px] font-black uppercase bg-red-500/20 text-red-500";
+                    resRisk.innerText = "CRITICAL";
+                    hfStatus.innerText = "UNDER COLLATERALIZED";
+                    hfStatus.className = "text-[10px] font-bold uppercase tracking-widest text-red-500";
+                    addLiveLog("⚠️ [ALERT] Health Factor < 1.0. Liquidation triggered.", "text-red-500 font-bold");
+                } else {
+                    resultIcon.className = "w-12 h-12 rounded-2xl flex items-center justify-center bg-green-600 shadow-green-500/20";
+                    resultTitle.innerText = "健康评估: 状态安全";
+                    resultTitle.className = "text-sm font-black uppercase tracking-widest text-green-500";
+                    resLiquid.innerText = "NO (FALSE)";
+                    resLiquid.className = "px-3 py-1 rounded-full text-[10px] font-black uppercase bg-green-500/20 text-green-500";
+                    resRisk.innerText = hf > 150 ? "LOW" : "MODERATE";
+                    hfStatus.innerText = "POSITION SAFE";
+                    hfStatus.className = "text-[10px] font-bold uppercase tracking-widest text-green-500";
+                    addLiveLog("✅ Position verified safe within current LTV thresholds.", "text-green-500");
+                }
+
+                // Unlock
+                submitBtn.disabled = false;
+                btnText.innerText = "CHECK LIQUIDATION";
+                btnIcon.className = "fas fa-shield-halved";
+
+            }, 4500);
+        });
+
+        function resetDemo() {
+            resultState.classList.add('hidden');
+            idleState.classList.remove('hidden');
+            addLiveLog("Interface returned to standby mode.");
+        }
+
+        // Init logs
+        addLiveLog("ArcLend Privacy Engine v1.0 Initialized.");
+        addLiveLog("Connected to Arcium MXE Cluster 456.");
+        addLiveLog("Listening for position metadata...");
+    </script>
+</body>
+</html>
