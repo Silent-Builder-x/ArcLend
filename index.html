@@ -7,10 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&family=JetBrains+Mono&display=swap');
         
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Manrope', sans-serif;
             background-color: #020617;
             color: #f8fafc;
         }
@@ -113,7 +113,7 @@
             <div class="bg-blue-900/10 border border-blue-500/20 p-5 rounded-2xl">
                 <div class="flex items-center gap-2 mb-2 text-blue-400">
                     <i class="fas fa-info-circle text-xs"></i>
-                    <span class="text-[10px] font-black uppercase tracking-widest">FHE Advantage</span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">MPC Advantage</span>
                 </div>
                 <p class="text-[11px] text-slate-500 leading-relaxed italic">
                     "在加密状态下，健康因子仅对 MXE 节点可见。外界无法通过扫描账本来预测您的爆仓点，从而杜绝清算狙击。"
@@ -187,7 +187,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Health Factor Card -->
                         <div class="bg-slate-950/50 p-8 rounded-[2rem] border border-slate-800 shadow-2xl flex flex-col items-center justify-center text-center">
-                            <p class="text-[10px] text-slate-500 mb-4 uppercase tracking-[0.2em] font-black">Health Factor (FHE)</p>
+                            <p class="text-[10px] text-slate-500 mb-4 uppercase tracking-[0.2em] font-black">Health Factor (MPC)</p>
                             <div class="relative w-32 h-32 flex items-center justify-center mb-4">
                                 <svg class="w-full h-full transform -rotate-90">
                                     <circle cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-900" />
@@ -225,7 +225,7 @@
                 <!-- Bottom Logs Area -->
                 <div class="mt-8 pt-8 border-t border-slate-800/50">
                     <div class="flex justify-between items-center mb-4 px-1">
-                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Network Telemetry (FHE-Lend)</span>
+                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Network Telemetry (MPC-Lend)</span>
                         <span class="text-[9px] mono text-slate-600">Arcium Program: 8sFjoV...8yKoT</span>
                     </div>
                     <div id="liveLogs" class="space-y-2 h-24 overflow-y-auto custom-scrollbar mono text-[10px] px-1">
@@ -268,10 +268,10 @@
 
         const logs = [
             "Generating session x25519 ephemeral key...",
-            "Encrypting raw financial data (u64)...",
+            "Splitting financial data into Secret Shares...",
             "Broadcasting Position packet to Cluster 456...",
             "MXE executing check_liquidation circuit...",
-            "Performing homomorphic division: (C*L)/D...",
+            "Performing oblivious division: (C*L)/D...",
             "Generating threshold boolean (is_liquidatable)...",
             "Finalizing Arcium callback for Program 8sFjoV..."
         ];
