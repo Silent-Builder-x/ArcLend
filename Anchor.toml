@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-arc_lend = "jFkuCZrSgfeKWEY2T5G9iNKBdmZqHXPE8NJX7nZycr9"
+test = "5VqTAAcyPvMZaS7V2kyZYLLVbdKnyrVDrLVRoq4SJ6Z3"
 
 [registry]
 url = "https://api.apr.dev"
