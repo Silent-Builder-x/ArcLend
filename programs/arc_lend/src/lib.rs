@@ -14,19 +14,19 @@ pub mod arclend {
         Ok(())
     }
 
-    /// [新增] 开立借贷仓位
+    /// [New] Open a lending position
     pub fn open_position(ctx: Context<OpenPosition>) -> Result<()> {
         let pos = &mut ctx.accounts.position;
         pos.owner = ctx.accounts.owner.key();
-        pos.encrypted_collateral = [0u8; 32]; // 初始为 0
-        pos.encrypted_debt = [0u8; 32];       // 初始为 0
+        pos.encrypted_collateral = [0u8; 32]; // Initialize to 0
+        pos.encrypted_debt = [0u8; 32];       // Initialize to 0
         pos.liquidation_threshold = 80;       // 80% LTV
         Ok(())
     }
 
-    /// [模拟] 更新仓位 (存款/借款)
-    /// 在真实 MPC 应用中，这里应当是加密的加法同态操作
-    /// 为简化 Demo，我们允许用户直接覆盖密文状态
+    /// [Simulation] Update position (deposit/borrow)
+    /// In a real MPC application, this should be a homomorphic addition operation
+    /// For simplicity in the demo, we allow users to directly overwrite the encrypted state
     pub fn update_position(
         ctx: Context<UpdatePosition>,
         new_collateral: [u8; 32],
@@ -39,8 +39,8 @@ pub mod arclend {
         Ok(())
     }
 
-    /// [核心] 触发清算检查
-    /// 任何人都可以调用，但必须经过 MPC 验证才能知道结果
+    /// [Core] Trigger liquidation check
+    /// Anyone can call this, but the result must be verified through MPC
     pub fn check_health(
         ctx: Context<CheckHealth>,
         computation_offset: u64,
@@ -53,10 +53,10 @@ pub mod arclend {
         let args = ArgBuilder::new()
             .x25519_pubkey(pubkey)
             .plaintext_u128(nonce)
-            // 传入链上存储的密文
+            // Pass in the ciphertext stored on-chain
             .encrypted_u64(pos.encrypted_collateral)
             .encrypted_u64(pos.encrypted_debt)
-            .plaintext_u64(pos.liquidation_threshold) // 阈值可以是明文配置
+            .plaintext_u64(pos.liquidation_threshold) // Threshold can be plaintext
             .build();
 
         queue_computation(
@@ -84,7 +84,7 @@ pub mod arclend {
             Err(_) => return Err(ErrorCode::AbortedComputation.into()),
         };
 
-        // 解析结果: { is_liquidatable, health_factor, shortfall }
+        // Parse results: { is_liquidatable, health_factor, shortfall }
         let liq_bytes: [u8; 8] = o.ciphertexts[0][0..8].try_into().unwrap();
         let hf_bytes: [u8; 8] = o.ciphertexts[1][0..8].try_into().unwrap();
 
@@ -94,13 +94,13 @@ pub mod arclend {
         if is_liquidatable {
             msg!("🚨 ALERT: Position is UNDERWATER! (HF: {})", hf);
             msg!("Liquidation logic triggered via CPI...");
-            // 在这里执行清算：将 collateral 转移给清算人
+            // Execute liquidation here: transfer collateral to the liquidator
         } else {
             msg!("✅ Position is HEALTHY. (HF: {})", hf);
         }
         
         emit!(HealthCheckEvent {
-            position: ctx.accounts.computation_account.key(), // 简化关联
+            position: ctx.accounts.computation_account.key(), // Simplified association
             is_liquidatable,
             health_factor: hf,
         });
@@ -146,7 +146,7 @@ pub struct PositionAccount {
 pub struct CheckHealth<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
-    pub position: Account<'info, PositionAccount>, // 读取目标仓位
+    pub position: Account<'info, PositionAccount>, // Read the target position
     
     #[account(init_if_needed, space = 9, payer = payer, seeds = [&SIGN_PDA_SEED], bump, address = derive_sign_pda!())]
     pub sign_pda_account: Account<'info, ArciumSignerAccount>,
