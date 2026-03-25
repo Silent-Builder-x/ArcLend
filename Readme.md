@@ -6,7 +6,7 @@
 
 In traditional DeFi lending (e.g., Aave, Compound), a user's health factor, collateral value, and debt are entirely transparent. This transparency allows predatory actors to calculate precise "liquidation points" and manipulate market prices to trigger liquidations. **ArcLend** solves this by performing risk assessment and liquidation checks entirely on **Secret-Shared Data** within Arcium's Multi-Party Execution (MXE) environment.
 
-## 🚀 Live Deployment Status (Devnet v0.8.3)
+## 🚀 Live Deployment Status (Devnet v0.9.2)
 
 The protocol is fully operational and verified on the Arcium Devnet.
 

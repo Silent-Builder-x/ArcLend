@@ -6,6 +6,6 @@ node_modules
 test-ledger
 .yarn
 encrypted-ixs/arcis_temp_target
-build
+# build
 encrypted-ixs/src/main.rs
 artifacts/
